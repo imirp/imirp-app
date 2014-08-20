@@ -5,7 +5,8 @@ name := """imirp"""
 Common.settings
 
 libraryDependencies ++= Seq(
-	"ws.securesocial" %% "securesocial" % "2.1.4"
+  "org.mindrot" % "jbcrypt" % "0.3m",
+  "com.typesafe" %% "play-plugins-mailer" % "2.2.0"
 )
 
 resolvers ++= Seq(

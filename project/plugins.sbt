@@ -13,7 +13,3 @@ resolvers += Resolver.file("Local Ivy Repository", file("/home/torben/.ivy2/loca
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.0-RC2")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.0.0-RC2")
-
-addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "0.5.1")
-
-addSbtPlugin("com.banno" % "sbt-license-plugin" % "0.1.0")
