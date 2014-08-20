@@ -1,0 +1,21 @@
+@(scripts: Html = Html(""), controller: Html = Html(""), project: dto.ProjectDto)(content: Html)
+
+@main(scripts, controller) {
+	<div class="row">
+	    <div class="col-xs-12">
+	    	<h1>@project.name</h1>	  		
+	    </div>
+   	</div>
+	<div class="row">
+		<div class="col-xs-2">
+			<ul class="nav nav-pills nav-stacked">
+				@navitem(routes.ViewController.viewProject(project.id).url, "Overview")
+				@navitem(routes.ViewController.projectMutateSetup(project.id).url, "Mutate")
+				@navitem(routes.ViewController.viewResults(project.id).url, "Results")
+			</ul>
+		</div>
+		<div class="col-xs-10">
+			@content
+		</div>
+	</div>	
+}

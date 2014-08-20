@@ -1,0 +1,64 @@
+@(pageJson: String)
+
+
+@scripts = {
+	<script type="text/javascript">
+		imirpApp.controller('TargetPredictCtrl', ['$http', '$scope', function($http, $scope) {
+			$scope.availableSpecies = @Html(pageJson);
+			$scope.selectSpecies = function(species){
+				$scope.selectedSpecies = species;
+			};
+			$scope.sequence = "";
+			$scope.submitFormUrl = appRoutes.controllers.ViewController.targetPredictSubmit().url;
+			$scope.validate = function(){
+				$scope.validationErrors = [];
+				var isValid = true;
+				
+				if($scope.sequence.length < 6){
+					$scope.validationErrors.push("Sequence must be at least 6 characters long.");
+					isValid = false;
+				}
+				
+				if($scope.sequence.match(/[^ACGTU]/)){
+					$scope.validationErrors.push("Sequence contains invalid characters. Ensure only 'A', 'C', 'G', 'U', or 'T' appears in the sequence");
+					isValid = false;
+				}
+				
+				// Validate species
+				if(!$scope.selectedSpecies){
+					$scope.validationErrors.push("Select a species");
+					isValid = false;
+				}
+				return isValid;
+			};
+		}]);
+	</script>
+}
+
+@controller = {ng-controller="TargetPredictCtrl"}
+
+@main(scripts, controller) {
+	<div class="row">
+	    <div class="col-xs-12">
+	    	<h1>Target Site Predictor</h1>	  		
+	    </div>
+   	</div>
+   	<div class="col-xs-12">
+  		<div class="alert alert-danger" role="alert" ng-repeat="message in validationErrors">{{message}}</div>
+  	</div>
+	<div class="row">
+		<div class="col-xs-12">
+	    	<label for="" class="control-label">Species</label>
+	    	<p class="form-control-static label label-info">{{selectedSpecies.genus}} {{selectedSpecies.species}}</p>
+	    	<imirp-species-select species="availableSpecies" on-species-select="selectSpecies(species)"></imirp-species-select>
+			<label for="" class="control-label">Sequence</label>
+			<textarea ng-trim="true" style="width:100%; min-height: 150px;" ng-model="sequence" format-sequence></textarea>
+		</div>					
+    </div>
+    <form action="{{submitFormUrl}}" method="post" target="_blank">
+    	<input type="hidden" name="species" value="{{selectedSpecies}}" />
+    	<input type="hidden" name="sequence" value="{{sequence}}" />
+  		<button type="submit" class="btn btn-primary" ng-disabled="!validate()"><span class="glyphicon glyphicon-download-alt"></span> Download Predictions</button>
+ 	</form>
+    
+}

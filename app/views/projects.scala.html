@@ -1,0 +1,43 @@
+@(projectsJson: String)
+
+@scripts = {
+	<script type="text/javascript" charset="utf-8">
+		imirpApp.controller('ProjectsCtrl', ['$http', '$scope', function($http, $scope) {
+			$scope.data = @Html(projectsJson);	
+			$scope.projectPath = function(pId){
+				return appRoutes.controllers.ViewController.viewProject(pId).url;
+			};
+			$scope.newProjectPath = function(){
+				return appRoutes.controllers.ViewController.createProject().url;
+			};
+			$scope.changePage = function(page){
+				window.location = appRoutes.controllers.ViewController.viewProjects(page, 10).url;
+			};
+		}]);
+	</script>
+}
+
+@controller = {ng-controller="ProjectsCtrl"}
+
+@main(scripts, controller) {
+  <div class="row" ng-if="data.totalProjects == 0">
+	<div class="col-xs-12">
+		<div class="jumbotron">
+		  <h1>No projects!</h1>
+		  <p>There are no existing projects. Try creating a new one!</p>
+		  <p><a href="{{newProjectPath()}}" class="btn btn-primary">Create New Project</a></p>
+		</div>
+	</div>
+  </div>
+  <div class="row" ng-if="data.totalProjects > 0">
+    <div class="col-xs-12">
+    	<h1>Projects <span class="badge">{{data.totalProjects}}</span></h1>
+    	<hr>    	
+    	<imirp-projects-list pages="data.totalPages" page-num="data.pageNum" on-page-change="changePage(page)">
+    		<a href="{{projectPath(p.id)}}" class="project-list-item list-group-item" ng-repeat="p in data.projects">    			
+    			<imirp-project-item project="p"></imirp-project-item>
+    		</a>
+    	</imirp-projects-list>
+    </div>
+  </div>
+}

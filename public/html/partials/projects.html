@@ -1,0 +1,6 @@
+<div ng-transclude class="project-list list-group"></div>
+<ul class="pagination" ng-if="pages > 1">
+  <li><a href="#" ng-click="prevPage()">&laquo;</a></li>
+  <li ng-repeat="i in getPages() track by $index" ng-class="{'active': pageNum == $index}"><a href="#" ng-click="goPage($index)">{{$index + 1}}</a></li>  
+  <li><a href="#" ng-click="nextPage()">&raquo;</a></li>
+</ul>

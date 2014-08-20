@@ -1,0 +1,27 @@
+<div href="#" class="list-group-item">
+	<div class="row">
+		<div class="col-xs-5">
+			<h4 class="list-group-item-heading">Mutation Strategy</h4>
+			<p class="list-group-item-text">Changes per site: <strong>{{request.strategy.changes}}</strong></p>
+			<p class="list-group-item-text">Allowable nucleotide changes: <strong>[{{request.strategy.nucleotides.join(', ')}}]</strong></p>
+			<h4 class="list-group-item-heading" style="margin-top: 10px;">Invalid Sites</h4>
+			<p class="list-group-item-text"><span class="border-seperate" ng-repeat="st in request.invalidSiteTypes">{{displaySiteType(st)}}</span></p>
+		</div>
+		<div class="col-xs-7 text-right">
+			<div class="stat-item"><strong>{{request.totalMutationsGenerated}}</strong><span>Mutations<span></div>			
+			<div class="stat-item"><strong>{{request.validMutationsGenerated}}</strong><span>Valid Mutations<span></div>
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-xs-4">
+			<small>Submitted <strong>{{request.dateRequested | date:'yyyy-MM-dd HH:mm:ss'}}</strong></small>
+		</div>
+		<div class="col-xs-4">
+			<span ng-if="request.dateCompleted"><small>Completed <strong>{{request.dateCompleted | date:'yyyy-MM-dd HH:mm:ss'}}</strong></small></span>
+		</div>
+		<div class="col-xs-4">
+			
+		</div>
+	</div>
+</div>

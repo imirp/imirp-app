@@ -1,0 +1,6 @@
+<div class="input-group">	
+	<input type="text" class="form-control" id="mutationSiteInput" ng-model="inputSite" ng-keypress="handleKeypress($event)"/><span class="input-group-btn"><button class="btn btn-default" ng-click="addSite()">Add Site</button></span>
+</div>
+<div class="list-group pre-scrollable" style="height: 301px;">
+	<a href="#" class="list-group-item" ng-repeat="site in sites" ng-mouseenter="hoverSite(site)" ng-mouseup="hoverSite()" ng-mouseleave="hoverSite()"><h4>({{site[0] + 1}},{{site[1] + 1}}) <span class="glyphicon glyphicon-remove" style="float: right;" ng-click="removeSite(site)"></h4></span></a>
+</div>

@@ -1,0 +1,3 @@
+<div class="input-group">
+	<input type="text" size="30" id="speciesSelect" placeholder="Select a species" ng-model="selectedSpecies" typeahead-editable="false" typeahead="s as s.genus + ' ' + s.species for s in species  | filter:$viewValue | limitTo:10" class="form-control">
+</div>

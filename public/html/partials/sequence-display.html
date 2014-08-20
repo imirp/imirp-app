@@ -1,0 +1,7 @@
+<table class="well">
+	<tr class="row final-mutant" ng-repeat="seqfifty in generateSeqFiftyHTML() track by $index">
+	  <td class="col-xs-1 text-right sequence-index sequence-index-left">{{$index * 50 + 1}}</td>
+	  <td class="col-xs-10 sequence text-left" ng-bind-html="seqfifty"></td>
+	  <td class="col-xs-1 sequence-index-right text-left">{{getChunkEndPosition($index)}}</td>
+	</tr>
+</table>

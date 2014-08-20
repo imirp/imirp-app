@@ -1,0 +1,73 @@
+@(scripts: Html = Html(""), controller: Html = Html(""))(content: Html)
+
+<!DOCTYPE html>
+
+<html ng-app="imirpApp">
+    <head>
+        <title>@Messages("title")</title>
+        <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/font-awesome.min.css")">                        
+    </head>
+    <body ng-cloak>
+		<!-- Static navbar -->
+	    <nav class="navbar navbar-default" role="navigation">
+  		  <div class="container-fluid">
+	        <div class="navbar-header">
+	          <button type="button" class="navbar-toggle btn navbar-btn" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+	                <span class="sr-only">Toggle navigation</span>
+	                <span class="icon-bar"></span>
+	                <span class="icon-bar"></span>
+	                <span class="icon-bar"></span>
+            	</button>
+	          <a class="navbar-brand" href="/">ImiRP</a>
+	        </div>
+	        
+	        <div class="navbar-collapse collapse" collapse="navCollapsed">
+	          <ul class="nav navbar-nav">
+	          	<li class="dropdown">
+	              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Projects <span class="caret"></span></a>
+	              <ul class="dropdown-menu" role="menu">
+	              	@navitem(routes.ViewController.viewProjects().url, "View Projects")
+	                @navitem(routes.ViewController.createProject().url, "Create New Project")
+	              </ul>
+	            </li>
+	            <li class="dropdown">
+	            	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools <span class="caret"></span></a>
+		            <ul class="dropdown-menu" role="menu">
+		            	@navitem(routes.ViewController.visualizeSequence().url, "Sequence Visualizer")
+		            	@navitem(routes.ViewController.targetPredict().url, "Target Site Predictor")
+		            </ul>
+	            </li>
+	            @navitem(routes.ViewController.about().url, "About")
+	          </ul>
+	          <ul class="nav navbar-nav navbar-right">
+	             <!--<li>Login</li>-->
+	          </ul>
+	        </div><!--/.nav-collapse -->	        
+	      </div><!-- /.container-fluid -->
+	    </nav>
+	    
+        <div class="container" @controller>        	
+            @content
+        </div>
+
+        <hr>
+        <div class="footer text-center">
+            <div>
+                <small>
+					
+                </small>
+            </div>
+        </div>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js" type="text/javascript"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-sanitize.min.js" type="text/javascript"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.0/ui-bootstrap-tpls.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src='@routes.ViewController.jsRoutes()'></script>
+        <script src="@routes.Assets.at("javascripts/app.js")" type="text/javascript"></script>
+		<script src="@routes.Assets.at("javascripts/services.js")" type="text/javascript"></script>
+        @scripts        
+    </body>
+</html>

@@ -1,0 +1,39 @@
+@(project: dto.ProjectDto, pageJson: String)
+
+@scripts = {	
+	<script type="text/javascript">
+		imirpApp.controller('ProjectsCtrl', ['$http', '$scope', function($http, $scope) {
+			var data = @Html(pageJson);
+			$scope.project = data.project;
+			$scope.mutationRequests = data.requests;
+			$scope.breadcrumbs = [
+				{name: $scope.project.name}
+			];
+			$scope.mutatePath = function(){
+				return appRoutes.controllers.ViewController.projectMutateSetup($scope.project.id).url;
+			};
+		}]);
+	</script>
+}
+
+@controller = {ng-controller="ProjectsCtrl"}
+
+@projectexplorer(scripts, controller, project) {
+  <div class="row">
+    <div class="col-xs-12">
+    	<tabset>
+    		<tab heading="Project Parameters">
+    			<imirp-project-parameters-display project="project"></imirp-project-parameters-display>
+    		</tab>
+    		<tab>
+    			<tab-heading>
+    				Mutation Requests <span class="badge">{{mutationRequests.length}}</span>
+    			</tab-heading>
+    			<alert ng-if="mutationRequests.length == 0" type="info">No mutation requests have been submitted</alert>
+    			<imirp-mutation-request ng-repeat="request in mutationRequests">
+    			</imirp-mutation-request>
+    		</tab>
+    	</tabset>
+    </div>
+  </div>  
+}

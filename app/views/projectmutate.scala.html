@@ -1,0 +1,165 @@
+@(project: dto.ProjectDto, pageJson: String)
+
+@scripts = {
+	<script type="text/javascript" charset="utf-8">
+		imirpApp.controller('MutationSetupCtrl', ['$scope', '$http', function($scope, $http){
+			var data = @Html(pageJson);
+			$scope.project = data.config.project;
+			$scope.breadcrumbs = [
+				{name: $scope.project.name, href: appRoutes.controllers.ViewController.viewProject($scope.project.id).url},
+				{name: "Mutate"}
+			];
+			$scope.dto = data.config;			
+			$scope.nucleotides = ['A','T','C','G'];			
+			$scope.selectedValidSiteTypes = [];
+			$scope.selectedInvalidSiteTypes = [];
+			$scope.mutationStrategies = data.strategies;			
+			
+			$scope.removeSelectedValid = function(){
+				var sv = $scope.selectedValidSiteTypes;
+				var index;
+				for(var i = 0; i < sv.length; i++){
+					index = $scope.dto.validSiteTypes.indexOf(sv[i]);
+					if(index > -1){
+						$scope.dto.validSiteTypes.splice(index, 1);
+						$scope.dto.invalidSiteTypes.unshift(sv[i]);
+					}
+				}
+			};	
+			
+			$scope.removeSelectedInvalid = function(){
+				var sv = $scope.selectedInvalidSiteTypes;
+				var index;
+				for(var i = 0; i < sv.length; i++){
+					index = $scope.dto.invalidSiteTypes.indexOf(sv[i]);
+					if(index > -1){
+						$scope.dto.invalidSiteTypes.splice(index, 1);
+						$scope.dto.validSiteTypes.unshift(sv[i]);
+					}
+				}
+			};
+						
+			$scope.toggleNucleotide = function(nuc){
+				var nucIdx = $scope.dto.strategy.nucleotides.indexOf(nuc);
+				if(nucIdx > -1){
+					$scope.dto.strategy.nucleotides.splice(nucIdx, 1);
+					return;
+				}
+				$scope.dto.strategy.nucleotides.push(nuc);
+			};
+			
+			$scope.displaySiteType = function(site){
+				var displayTxt = site.siteType;
+				if(site.guWobble){
+					displayTxt += ' + GU';
+				}
+				return displayTxt;
+			};
+			$scope.messages = [];
+			$scope.Range = function(start, end) {
+			    var result = [];
+			    for (var i = start; i <= end; i++) {
+			        result.push(i);
+			    }
+			    return result;
+			};
+			
+			$scope.submit = function(){					
+				$http.post(appRoutes.controllers.ApiController.projectMutate().url, $scope.dto)
+			        .success(function (data, status, headers, config) {
+			            window.location = appRoutes.controllers.ViewController.viewResults($scope.project.id).url;
+			        }).error(function (data, status, headers, config) {
+			        	$scope.addAlert({msg: data.message, type: 'danger'});
+			            console.log("Failed to mutate!");
+			            console.log(data);
+			        });
+			};
+			$scope.alerts = [];
+			$scope.addAlert = function(alert) {
+				$scope.alerts.push(alert);
+			};
+			
+			$scope.closeAlert = function(index) {
+				$scope.alerts.splice(index, 1);
+			};			
+		}])
+	</script>
+	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/ngDialog.min.css")">
+	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/ngDialog-theme-default.min.css")">
+}
+
+@controller = {ng-controller="MutationSetupCtrl"}
+
+@projectexplorer(scripts, controller, project) {
+  <div class="row">
+    <div class="col-xs-12">
+  	  <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+    	<imirp-sequence-display sequence="{{project.sequence}}" highlights="project.mutationSites" focus="focusedSite"></imirp-sequence-display>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+	   <tabset>
+	   		<tab heading="Project Parameters">
+    			<imirp-project-parameters-display no-sequence="true" project="project"></imirp-project-parameters-display>
+    		</tab>
+			<tab heading="Mutation Strategy">
+				<imirp-mutation-instructions>
+					<div class="well well-lg">
+						Using the check boxes, nucleotides to use for mutagenesis can be selected.  All changes  to the wild type sequence will be made using only this specific set of nucleotides.  The number of nucleotide changes to introduce per seed site can be defined using the “mutation strategy” drop down menu.
+					</div>
+				</imirp-mutation-instructions>
+				<label>Allowable nucleotides for mutation</label>
+		    	<div class="input-group">
+			    	<label ng-repeat="nuc in nucleotides" class="checkbox-inline">
+				      <input type="checkbox" name="selectedNucleotides[]" ng-click="toggleNucleotide(nuc)" ng-checked="dto.strategy.nucleotides.indexOf(nuc) > -1"> {{nuc}} 
+				    </label>
+			    </div>
+		    	<div class="input-group">
+			    	<label for="mutationStrategySelect">Mutation strategy</label>
+		    		<select class="form-control" id="mutationStrategySelect" name="mutationStrategy" ng-model="dto.strategy.changes" ng-options="numChanges + ' changes per site' for numChanges in Range(1, 6)"></select>
+			    </div>
+			</tab>
+			<tab heading="Define Invalid Sites">
+				<imirp-mutation-instructions>
+					<div class="well well-lg">
+						Invalid sites are predicted miRNA target sites that are newly created upon mutation that the researcher wishes to exclude from the final mutant sequence.  For example, selecting and using arrow buttons to move the 8mer site into the “invalid sites” list will ensure that the final mutant sequence does not contain any newly created predicted 8mer target sites for any miRNAs of the selected species.  Newly created target sites of other types, such as 8mer sites having a single G:U pairing (8mer-GU), will be permitted in the final mutant sequence.
+					</div>
+				</imirp-mutation-instructions>
+				<div class="row">
+					<div class="col-xs-3">
+				    	<div class="input-group">
+					    	<label for="invalidSiteTypesSelect">Invalid site types</label>
+							<select class="form-control" multiple ng-multiple="true" size="8" id="invalidSiteTypesSelect" ng-model="$parent.selectedInvalidSiteTypes" ng-options="displaySiteType(site) for site in dto.invalidSiteTypes"></select>
+						</div>
+				    </div>
+				    <div class="col-xs-1">
+				    	<div class="input-group" style="width: 100%; margin-top: 40px;">
+				    		<button class="form-control btn btn-default" ng-click="removeSelectedValid()"><span class="glyphicon glyphicon-backward"></span></button>
+				    	</div>
+				    	<div class="input-group" style="width: 100%; margin-top: 40px;">
+				    		<button class="form-control btn btn-default" ng-click="removeSelectedInvalid()"><span class="glyphicon glyphicon-forward"></span></button>
+				    	</div>
+				    </div>
+				    <div class="col-xs-3">
+				    	<div class="input-group">
+					    	<label for="validSiteTypesSelect">Valid site types</label>
+					    	<select class="form-control" multiple ng-multiple="true" size="8" id="validSiteTypesSelect" ng-model="$parent.selectedValidSiteTypes" ng-options="displaySiteType(site) for site in dto.validSiteTypes"></select>
+						</div>
+				    </div>
+				    <div class="col-xs-5"></div>
+				</div>
+			</tab>
+		</tabset>		
+	</div>
+  </div>
+  <div class="row spacer">
+	<div class="col-xs-12">
+		<button class="btn btn-primary btn-lg" ng-click="submit()"><span class="glyphicon glyphicon-cloud-upload"></span> Submit Mutation Request</button>
+	</div>
+  </div>
+}

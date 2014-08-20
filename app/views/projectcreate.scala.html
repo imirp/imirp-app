@@ -1,0 +1,160 @@
+@(pageJson: String)
+
+@scripts = {	
+	<script type="text/javascript">
+		imirpApp.controller('ProjectsCtrl', ['$http', '$scope', function($http, $scope) {
+			$scope.dto = @Html(pageJson);
+			$scope.breadcrumbs = [
+				{name: "New", href: appRoutes.controllers.ViewController.createProject().url}
+			];
+			$scope.availableSpecies = $scope.dto.species.sort(function(a,b){
+				return a.genus.localeCompare(b.genus);
+			});
+			$scope.focusedSite;
+			$scope.newProject = {};
+			$scope.selectSpecies = function(species){
+				$scope.newProject.species = species;
+			};
+			$scope.setMutationSites = function(sites){
+				$scope.newProject.mutationSites = sites;
+			};
+			
+			$scope.setFocusedSite = function(site){
+				$scope.focusedSite = site;
+			};
+			$scope.validationErrors = [];
+			$scope.validateProject = function(){
+				$scope.validationErrors = []; // clear validation messages
+				var isValid = true;
+				
+				// Validate sequence
+				if(!$scope.newProject.sequence){
+					$scope.validationErrors.push("Please input a sequence");
+					isValid = false;
+				}else{
+					if($scope.newProject.sequence.length < 6){
+						$scope.validationErrors.push("Sequence must be at least 6 Nucleotides long");
+						isValid = false;
+					}
+					if($scope.newProject.sequence.match(/[^ACGTU]/)){
+						$scope.validationErrors.push("Sequence contains invalid characters. Ensure only 'A', 'C', 'G', 'U', or 'T' appears in the sequence");
+						isValid = false;
+					}
+				}
+				
+				// Validate mutation sites
+				if($scope.newProject.mutationSites.length == 0){
+					$scope.validationErrors.push("Add at least one mutation site");
+					isValid = false;
+				}
+				
+				// Validate project name
+				if(typeof $scope.newProject.name === 'undefined' || $scope.newProject.name.length == 0){
+					$scope.validationErrors.push("Choose a name for the project");
+					isValid = false;
+				}
+				
+				// Validate species
+				if(!$scope.newProject.species){
+					$scope.validationErrors.push("Select a species");
+					isValid = false;
+				}
+				
+				$scope.projectValid = isValid;
+			};
+			$scope.submitNewProject = function(form) {
+				// Install a watch for updating validations (but only if we haven't already')
+				if(typeof $scope.projectValid === 'undefined'){
+					$scope.$watch('newProject', function(newV, oldV){
+						$scope.validateProject();
+					}, true);
+				}
+				$scope.validateProject();
+				if($scope.projectValid){
+			        $http.post(appRoutes.controllers.ApiController.createProject().url, $scope.newProject)
+			        .success(function (data, status, headers, config) {
+			            window.location = appRoutes.controllers.ViewController.viewProject(data.id).url;
+			        }).error(function (data, status, headers, config) {
+			            console.log("Failed to save project!");
+			        });
+		        }
+			};
+		}]);
+	</script>
+}
+
+@controller = {ng-controller="ProjectsCtrl"}
+
+@main(scripts, controller) {
+  <div class="row">
+  	<div class="col-xs-12">
+  		<div ng-if="projectValid" class="alert alert-success" role="alert"><span class="glyphicon glyphicon-ok"></span> Your project configuration is valid</div>
+  		<h4 ng-if="validationErrors.length > 0"><span class="glyphicon glyphicon-exclamation-sign"></span> There are some errors with your project configuration...</h4>
+  		<div class="alert alert-danger" role="alert" ng-repeat="message in validationErrors">{{message}}</div>
+  	</div>
+  </div>
+	<div class="row">
+		<div class="col-xs-12">
+			<imirp-sequence-display sequence="{{newProject.sequence}}" highlights="newProject.mutationSites" focus="focusedSite"></imirp-sequence-display>
+		</div>
+	</div>
+  <div class="row">
+    <div class="col-md-12">
+    	<h1>Create Project</h1>
+    	<form name="projectForm" novalidate role="form">
+    		<tabset>
+    		<tab heading="Project Description">
+    			<!-- PROJECT NAME -->
+				<div class="form-group">
+					<label for="name">Project Name</label>
+					<span class="label label-danger" data-ng-show="submitted && projectForm.name.$error.required">Required!</span>
+					<input type="text" name="name" data-ng-model="newProject.name" class="form-control" required />
+				</div>
+				
+				<!-- PROJECT DESCRIPTION -->
+				<div class="form-group">
+					<label for="description">Description</label>
+					<textarea name="description" data-ng-model="newProject.description" class="form-control"></textarea>
+				</div>
+    		</tab>
+			<tab heading="Sequence Input" active>
+				<imirp-mutation-instructions>
+				<div class="well well-lg">
+					Copy and paste the wild type 3’UTR DNA or RNA sequence into the textbox and select the species of interest from the drop down menu.  The wild type sequence can be edited at any point during the process of specifying project parameters.
+				</div>
+				</imirp-mutation-instructions>
+				<div class="row">
+					<div class="col-xs-4">
+				    	<label for="" class="control-label">Species</label>
+				    	<p class="form-control-static label label-info">{{newProject.species.genus}} {{newProject.species.species}}</p>
+				    	<imirp-species-select species="availableSpecies" on-species-select="selectSpecies(species)"></imirp-species-select>
+				    </div>
+					<div class="col-xs-8">
+						<label for="" class="control-label">Sequence</label>
+						<textarea ng-trim="true" style="width:100%; min-height: 150px;" ng-model="newProject.sequence" format-sequence></textarea>
+					</div>					
+			    </div>
+			</tab>
+			<tab >
+				<tab-heading>
+					Target Sites <span class="badge">{{newProject.mutationSites.length}}</span>
+				</tab-heading>
+				<imirp-mutation-instructions>
+					<div class="well well-lg">
+						Specify the predicted target sites to mutate by typing the first nucleotide position of each 6mer “core” seed site into mutation site text box.  The 6mer seed site is complementary to miRNA positions 2-7 and changes introduced into this region have the largest impact on site efficacy.  The positions of the start and end nucleotides are displayed in (x, y) format, where x is the defined start position and y is the end position.  Defined seed sites will appear bolded in the sequence display for inspection.
+					</div>
+				</imirp-mutation-instructions>
+				<div class="row">
+					<div class="col-xs-4">
+						<label>Mutation sites</label>
+		    			<imirp-site-selector sequence-length="{{newProject.sequence.length}}" site-length="6" on-site-update="setMutationSites(sites)" on-site-focus="setFocusedSite(site)"></imirp-site-selector>
+	    			</div>
+	    			<div class="col-xs-8"></div>
+    			</div>
+			</tab>
+			</tabset>
+  		</form>
+  		<button class="btn btn-primary btn-lg" ng-click="submitNewProject(projectForm)"><span class="glyphicon glyphicon-ok"></span> Create Project</button>
+    </div>
+  </div>
+}

@@ -1,0 +1,20 @@
+<div class="row">
+	<div class="col-xs-2">
+		<label>Mutation Sites</label>
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="site in project.mutationSites">({{site[0] + 1}}, {{site[1] + 1}})</li>
+		</ul>
+	</div>
+	<div class="col-xs-2">
+		<label>Species</label>
+		<p>
+			{{project.species.genus}} {{project.species.species}}
+		</p>
+	</div>
+	<div class="col-xs-8">
+	</div>
+</div>
+<div ng-if="!noSequence">
+	<label>Sequence</label>
+	<imirp-sequence-display sequence="{{project.sequence}}" highlights="project.mutationSites" focus="focusedSite"></imirp-sequence-display>	
+</div>

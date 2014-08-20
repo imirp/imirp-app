@@ -1,0 +1,20 @@
+<div id="region_{{region.regionId}}" class="panel panel-default" ng-class="{'panel-success': selected}">
+  <div class="panel-heading region-title" ng-click="toggleMutants()">
+    <h3 class="panel-title"><span class="caret" ng-class="{'caret-right': isHidden(), 'caret-down': !isHidden()}"></span>Region {{getRegionTitle()}} <span class="badge pull-right">{{mutants.length}}</span></h3>
+  </div>
+  <div class="panel-body mutants" id="mutants_{{region.regionId}}" ng-hide="isHidden()">
+    <div class="sequence region">
+      {{getHighlightedSequenceSnippetHtml(sequence, " ", " ")}}
+    </div>
+    <div ng-if="mutants.length == 0">
+    	<div class="alert alert-info" role="alert">No valid mutations were produced for this region. Try submitting a new mutation request with less stringent parameters.</div>
+    </div>
+    <div class="sequence" ng-repeat="mutant in mutants">
+      <!--<ng-include src="'partials/mutant-sequence-display.html'"></ng-include>-->
+      <label class="sequence">
+        <input type="radio" name="selectedMutation_{{region.regionId}}" value="{{mutant.id}}" ng-model="selectedMutants[region.regionId]" >
+        {{getHighlightedSequenceSnippetHtml(mutant.sequence)}}
+      </label>
+    </div>
+  </div>
+</div>

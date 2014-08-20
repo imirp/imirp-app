@@ -1,0 +1,132 @@
+@(project: dto.ProjectDto, data: String)
+
+@scripts = {
+	<script type="text/javascript" charset="utf-8">
+		imirpApp.controller('ProjectResultsCtrl', ['$scope', '$http', '$timeout', 'SequenceSvc', function($scope, $http, $timeout, SequenceSvc) {			
+			function tick() {
+		        $http.get(appRoutes.controllers.ApiController.getResults($scope.data.project.id, 5).url).success(function (data) {
+		            updateData(data);
+		        });
+		    };
+		    var updateData = function(data){
+				$scope.data = data;
+				$scope.hasResults = $scope.data.hasResults;
+				$scope.hasActiveRequest = $scope.data.activeRequests.length > 0;
+				// Schedule another update if we still have an active request
+				if($scope.hasActiveRequest){
+	            	$timeout(tick, 5000);
+	            }
+			};
+			updateData(@Html(data));
+			$scope.data.regions.sort(function(a,b){
+				return a.regionStart - b.regionStart;
+			});			
+			$scope.breadcrumbs = [
+				{name: $scope.data.project.name, href: appRoutes.controllers.ViewController.viewProject($scope.data.project.id).url},
+				{name: 'Results'}
+			];
+			$scope.getMutatePath = function(){
+				return appRoutes.controllers.ViewController.projectMutateSetup($scope.data.project.id).url;
+			};
+			$scope.selectedMutations = {};	
+		    $scope.isRegionSelected = function(region){
+		    	return typeof $scope.selectedMutations[region.regionId] !== 'undefined';
+		    };			
+			$scope.getMutantsForRegion = function(regionId){
+				return $scope.data.regionMutants[regionId];
+			};
+			
+			$scope.getRegion = function(regionId){
+				for(var i = 0; i < $scope.data.regions.length; i++){
+					if($scope.data.regions[i].regionId == regionId){
+						return $scope.data.regions[i];
+					}
+				}
+			};
+			
+			$scope.getAllSites = function(){
+				var allSites = [];
+				var region;
+				for(var i = 0; i < $scope.data.regions.length; i++){
+					region = $scope.data.regions[i];
+					allSites = allSites.concat(region.sites);
+				}
+				return allSites;
+			};
+			
+			$scope.sites = $scope.getAllSites();
+			
+			$scope.combineSequence = function(){
+				var mutationSequencesAndSites = [];
+				var getMutationSequence = function(regionId, mutationId){
+					var mutants = $scope.getMutantsForRegion(regionId);
+					for(var i = 0; i < mutants.length; i++){
+						if(mutants[i].id == mutationId){
+							return mutants[i].sequence;
+						}
+					}
+				};
+				for(var regionId in $scope.selectedMutations){
+					var region = $scope.getRegion(regionId);
+					var mutationId = $scope.selectedMutations[regionId];
+					var sequenceAndSite = {
+						sequence: getMutationSequence(regionId, mutationId),
+						regionStart: region.regionStart,
+						regionEnd: region.regionEnd
+					};
+					mutationSequencesAndSites.push(sequenceAndSite);
+				}
+				return SequenceSvc.combineSequence($scope.data.project.sequence, mutationSequencesAndSites);
+			};
+			
+			$scope.submitFormUrl = appRoutes.controllers.ViewController.analyzeMutant($scope.data.project.id).url;
+		}])
+	</script>
+}
+
+@controller = {ng-controller="ProjectResultsCtrl"}
+
+@projectexplorer(scripts, controller, project) {
+  <div ng-if="!hasResults && !hasActiveRequest" class="row">
+  	<div class="col-xs-12">
+  		<div class="panel panel-warning">
+	  		<div class="panel-heading"><h3 class="panel-title">No results!</h3></div>
+	  		<div class="panel-body">
+				<p><strong>{{data.project.name}}</strong> has no results. To get results, submit a new project mutation request.</p>
+				<p><a class="btn btn-default" role="button" href="{{getMutatePath()}}">Create Mutation Request</a></p>
+			</div>
+		</div>
+  	</div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="row" ng-if="hasActiveRequest">
+      	<div class="col-xs-12">
+      		<h3><span class="glyphicon glyphicon-cog"></span> Request in progress...</h3>
+      		<p>You have a mutation request that is still being processed. You can still assemble a sequence with the results that are already available.</p>
+      		<div class="progress progress-striped active">
+			  <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+			  </div>
+			</div>
+		</div>
+	  </div>
+	  <div class="row">
+	    <div class="col-xs-12">
+	    	<imirp-result-pnl region-selections="selectedMutations" sequence="data.project.sequence">
+	      		<imirp-region-select ng-repeat="r in data.regions" selected="isRegionSelected(r)" region="r" mutants="data.regionMutants[r.regionId]"></imirp-result-select>
+	      	</imirp-result-pnl>
+	    </div>
+	  </div>
+	  <div class="row">
+	    <div class="col-xs-12">
+	      <h3>Assembled Mutant Sequence</h3>
+	      <imirp-sequence-display sequence="{{combineSequence()}}" highlights="sites"></imirp-sequence-display>
+	      <form action="{{submitFormUrl}}" method="post" target="_blank">
+	    		<input type="hidden" name="mutantSequence" value="{{combineSequence()}}" />
+	      		<button id="submitFinalBtn" type="submit" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-download-alt"></span> Download Sequence Analysis</button>
+	     	</form>
+	    </div>
+	  </div>
+	 </div>
+	</div>
+}
