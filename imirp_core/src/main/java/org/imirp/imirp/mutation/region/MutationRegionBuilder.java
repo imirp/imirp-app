@@ -32,16 +32,16 @@ public class MutationRegionBuilder {
 	public MutationRegionBuilder(){}
 	
 	public MutationRegionBuilder addSites(MutationSite... sites){
-		List<MutationSite> sortedSites = new ArrayList<MutationSite>(Arrays.asList(sites));
-		return addSortedSites(sortedSites);
+		List<MutationSite> sitesList = new ArrayList<MutationSite>(Arrays.asList(sites));
+		return sortAndAddSites(sitesList);
 	}
 	
 	public MutationRegionBuilder addSites(Collection<MutationSite> sites){
-		List<MutationSite> sortedSites = new ArrayList<>(sites);
-		return addSortedSites(sortedSites);
+		List<MutationSite> sitesList = new ArrayList<>(sites);
+		return sortAndAddSites(sitesList);
 	}
 	
-	private MutationRegionBuilder addSortedSites(List<MutationSite> sortedSites) {
+	private MutationRegionBuilder sortAndAddSites(List<MutationSite> sortedSites) {
 		Collections.sort(sortedSites);
 		for(MutationSite site : sortedSites){
 			addSite(site);
