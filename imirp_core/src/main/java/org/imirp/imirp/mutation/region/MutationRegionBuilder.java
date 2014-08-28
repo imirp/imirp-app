@@ -17,7 +17,9 @@
 package org.imirp.imirp.mutation.region;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.imirp.imirp.mutation.MutationSite;
@@ -30,14 +32,18 @@ public class MutationRegionBuilder {
 	public MutationRegionBuilder(){}
 	
 	public MutationRegionBuilder addSites(MutationSite... sites){
-		for(MutationSite site : sites){
-			addSite(site);
-		}
-		return this;
+		List<MutationSite> sortedSites = new ArrayList<MutationSite>(Arrays.asList(sites));
+		return addSortedSites(sortedSites);
 	}
 	
 	public MutationRegionBuilder addSites(Collection<MutationSite> sites){
-		for(MutationSite site : sites){
+		List<MutationSite> sortedSites = new ArrayList<>(sites);
+		return addSortedSites(sortedSites);
+	}
+	
+	private MutationRegionBuilder addSortedSites(List<MutationSite> sortedSites) {
+		Collections.sort(sortedSites);
+		for(MutationSite site : sortedSites){
 			addSite(site);
 		}
 		return this;

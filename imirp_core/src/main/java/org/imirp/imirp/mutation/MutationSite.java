@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonSerialize(using = MutationSiteSerializer.class)
 @JsonDeserialize(using = MutationSiteDeserializer.class)
-public class MutationSite {
+public class MutationSite implements Comparable<MutationSite> {
 	public final int startIndex;
 	public final int endIndex;
 	
@@ -74,6 +74,11 @@ public class MutationSite {
 	@Override
 	public String toString() {
 		return "(" + startIndex + "," + endIndex + ")";
+	}
+
+	@Override
+	public int compareTo(MutationSite o) {
+		return this.startIndex - o.startIndex;
 	}
 	
 }
