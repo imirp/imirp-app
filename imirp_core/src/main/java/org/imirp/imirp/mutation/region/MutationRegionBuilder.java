@@ -45,19 +45,20 @@ public class MutationRegionBuilder {
 	
 	void addSite(MutationSite site){
 		// Check that this site is valid for our current state
-		if(regions.size() > 0 && regions.get(regions.size() - 1).getRegionStartIndex() > site.getStartIndex()){
-			throw new IllegalArgumentException("The site " + site + " is invalid because it extends past the previous region's start index.");
+		MutationRegion mr = regions.get(regions.size() - 1);
+		if(regions.size() > 0 && mr.getRegionStartIndex() > site.getStartIndex()){
+			throw new IllegalArgumentException("The site [" + site + "] is invalid because it extends past the previous region[" + mr +"]'s start index.");
 		}
 		
 		// Check if we have any independent region in progress already
-		if(regions.size() == 0 || !(regions.get(regions.size() - 1) instanceof IndependentMutationRegion)){
+		if(regions.size() == 0 || !(mr instanceof IndependentMutationRegion)){
 			// Nope, just start a new independent region and we're done
 			regions.add(new IndependentMutationRegion(site));
 			return;
 		}
 		
 		// Subsequent sites check for overlap or new independent region sites
-		MutationRegion lastRegion = regions.get(regions.size() - 1);		
+		MutationRegion lastRegion = mr;		
 		List<MutationSite> currentSites = new ArrayList<>(lastRegion.getMutationSites());
 		List<OverlappingRegion> currentOverlaps = new ArrayList<>(lastRegion.getOverlapRegions());
 		MutationRegion nextRegion = null;

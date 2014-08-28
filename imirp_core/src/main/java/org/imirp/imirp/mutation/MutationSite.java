@@ -70,4 +70,10 @@ public class MutationSite {
 	public boolean containsSequenceIndex(int seqIndex) {
 		return seqIndex >= startIndex && seqIndex <= endIndex;
 	}
+
+	@Override
+	public String toString() {
+		return "(" + startIndex + "," + endIndex + ")";
+	}
+	
 }
