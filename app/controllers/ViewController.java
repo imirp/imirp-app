@@ -50,7 +50,7 @@ public class ViewController extends Controller {
 	}
 
 	public Result index() {		
-		return redirect(routes.ViewController.viewProjects(0, 10));
+		return redirect(controllers.routes.ViewController.viewProjects(0, 10));
 	}
 
 	public Promise<Result> viewProjects(final int page, final int limit) {
@@ -186,4 +186,5 @@ public class ViewController extends Controller {
 			config.project = project;
 		}
 	}
+	
 }

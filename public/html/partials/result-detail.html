@@ -4,7 +4,7 @@
   </div>
   <div class="panel-body mutants" id="mutants_{{region.regionId}}" ng-hide="isHidden()">
     <div class="sequence region">
-      {{getHighlightedSequenceSnippetHtml(sequence, " ", " ")}}
+      {{getHighlightedSequenceSnippetHtml(sequence)}}
     </div>
     <div ng-if="mutants.length == 0">
     	<div class="alert alert-info" role="alert">No valid mutations were produced for this region. Try submitting a new mutation request with less stringent parameters.</div>

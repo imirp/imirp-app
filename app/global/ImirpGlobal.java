@@ -1,3 +1,4 @@
+package global;
 /**
 *   Copyright 2014 Torben Werner, Bridget Ryan
 *
@@ -34,6 +35,8 @@ public class ImirpGlobal extends GlobalSettings {
 		INJECTOR = Guice.createInjector(new _ImirpGlobalModule());
 		super.onStart(app);
 	}
-	
-	
+
+	public static Injector getINJECTOR() {
+		return INJECTOR;
+	}
 }

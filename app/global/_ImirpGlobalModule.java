@@ -1,3 +1,4 @@
+package global;
 /**
 *   Copyright 2014 Torben Werner, Bridget Ryan
 *

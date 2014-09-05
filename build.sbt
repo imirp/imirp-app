@@ -1,6 +1,6 @@
 import sbt.Keys._
 
-name := """imirp"""
+name := """imirp_web"""
 
 Common.settings
 

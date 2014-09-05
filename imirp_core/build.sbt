@@ -8,7 +8,7 @@ EclipseKeys.projectFlavor := EclipseProjectFlavor.Java
 
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource
 
-libraryDependencies ++= Seq(
+libraryDependencies ++= Seq(	
 	"log4j" % "log4j" % "1.2.17",
 	"junit" % "junit" % "4.10",
 	"com.novocode" % "junit-interface" % "0.10-M2" % Test,
