@@ -26,5 +26,4 @@ lazy val root = (project in file("."))
 	.aggregate(imirp_core)
 	.dependsOn(imirp_core)
 
-lazy val imirp_core = (project in file("imirp_core"))
- 
+lazy val imirp_core = (project in file("imirp_core")) 
