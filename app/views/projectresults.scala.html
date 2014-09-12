@@ -89,6 +89,11 @@
 @projectexplorer(scripts, controller, project) {
   <div ng-if="!hasResults && !hasActiveRequest" class="row">
   	<div class="col-xs-12">
+  		<imirp-mutation-instructions>
+			<div class="well well-lg">
+				Any specified target sites to mutate that are spaced less than 8 nucleotides apart are grouped into a single “region”.  Each region is annotated based on the positions of the first and last nucleotides of specified miRNA target sites within each region.  Up to five valid mutants will be displayed for each each region, and the researcher can select one mutant from each to assemble into a final mutant sequence.  The wild type sequence for each region is displayed above the mutant sequences, with specified target sites to mutate bracketed.  The “Assembled Mutant Sequence” displayed below is updated as desired mutations are selected.  To view mutation request parameters, see “Overview”.
+			</div>
+		</imirp-mutation-instructions>
   		<div class="panel panel-warning">
 	  		<div class="panel-heading"><h3 class="panel-title">No results!</h3></div>
 	  		<div class="panel-body">

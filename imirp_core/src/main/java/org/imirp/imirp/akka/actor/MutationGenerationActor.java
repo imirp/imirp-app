@@ -50,7 +50,7 @@ import akka.japi.Procedure;
  */
 public class MutationGenerationActor extends UntypedActor {
 	final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
-	private static final long REGION_PROCESSING_TIMEOUT_MINUTES = 1; // 20 minutes
+	private static final long REGION_PROCESSING_TIMEOUT_MINUTES = 15; // 20 minutes
 	
 	private ImirpContext currentWork;
 	private ActorRef supervisor;

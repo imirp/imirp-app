@@ -149,7 +149,17 @@
 					    	<select class="form-control" multiple ng-multiple="true" size="8" id="validSiteTypesSelect" ng-model="$parent.selectedValidSiteTypes" ng-options="displaySiteType(site) for site in dto.validSiteTypes"></select>
 						</div>
 				    </div>
-				    <div class="col-xs-5"></div>
+				    <div class="col-xs-5">
+				    	<label>Site type key:</label>
+				    	<ul class="list-group">
+							<li class="list-group-item"><strong>6mer:</strong> miRNA target site complementary to miRNA positions 2-7</li>
+							<li class="list-group-item"><strong>OS-6mer:</strong> offset-6mer, miRNA target site complementary to miRNA positions 3-8</li>
+							<li class="list-group-item"><strong>7mer-A1:</strong> miRNA target site complementary to miRNA positions 2-7 having an A across from miRNA position 1</li>
+							<li class="list-group-item"><strong>7mer-m8:</strong> miRNA target site complementary to miRNA position 2-8</li>
+							<li class="list-group-item"><strong>8mer:</strong> miRNA target site complementary to miRNA positions 2-8 and having an A across from miRNA position 1</li>
+							<li class="list-group-item"><strong>+GU:</strong> site contains a single G:U wobble pair</li>
+						</ul>
+				    </div>
 				</div>
 			</tab>
 		</tabset>		
