@@ -111,6 +111,13 @@
 					<input type="text" name="name" data-ng-model="newProject.name" class="form-control" required />
 				</div>
 				
+				<!-- PROJECT EMAIL -->
+				<div class="form-group">
+					<label for="name">Project Email</label>
+					<span class="label label-danger" data-ng-show="submitted && projectForm.email.$error.required">Required!</span>
+					<input type="text" name="name" data-ng-model="newProject.email" class="form-control" required />
+				</div>
+				
 				<!-- PROJECT DESCRIPTION -->
 				<div class="form-group">
 					<label for="description">Description</label>

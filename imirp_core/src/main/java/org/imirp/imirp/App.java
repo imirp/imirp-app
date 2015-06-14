@@ -63,7 +63,7 @@ public class App {
 		Config config = injector.getInstance(Config.class);
 		ImirpDataStore datastore = injector.getInstance(ImirpDataStore.class);
 		MultiSiteMutation msm = new MultiSiteMutation(SEQUENCE, MUTATION_SITES, null);
-		Project newProject = new Project("Imirp Project - " + UUID.randomUUID(), "", SEQUENCE, msm.getSites(), new Species("mmu"));
+		Project newProject = new Project("test@example.com", "Imirp Project - " + UUID.randomUUID(), "", SEQUENCE, msm.getSites(), new Species("mmu"));
 		datastore.saveNewProject(newProject);
 		TargetSiteType[] invalidSiteTypes = loadInvalidSiteTypes(config);
 		injector.getInstance(ImirpCoreApi.class).projectMutate(

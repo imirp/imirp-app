@@ -19,10 +19,11 @@ EclipseKeys.skipParents in ThisBuild := false
 
 EclipseKeys.projectFlavor := EclipseProjectFlavor.Java
 
-EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE17)
+EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE18)
 
 lazy val root = (project in file("."))
 	.enablePlugins(play.PlayJava)
+	.enablePlugins(SbtWeb)
 	.aggregate(imirp_core)
 	.dependsOn(imirp_core)
 

@@ -10,6 +10,6 @@ resolvers += "Sonatype OSS Snasphots" at "http://oss.sonatype.org/content/reposi
 resolvers += Resolver.file("Local Ivy Repository", file("/home/torben/.ivy2/local/"))(Resolver.ivyStylePatterns)
 
 // Use the Play sbt plugin for Play projects
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.0-RC2")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.9")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.0.0-RC2")
+addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.0.6")

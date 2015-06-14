@@ -48,7 +48,7 @@ public interface ApiService {
      * @return an updated copy of the project that was saved
      */
     ProjectDto saveNewProject(ProjectDto newProject);
-    ProjectsPageDto getProjects(int page, int limit);
+    ProjectsPageDto getProjectsByEmail(String email);
 	Set<Species> getAvailableSpecies();
 	ProjectDto getProject(ObjectId projectId);
 	Iterable<MutationRegion> getProjectMutationRegions(ObjectId projectId);
@@ -61,16 +61,10 @@ public interface ApiService {
 	
 	public static final class ProjectsPageDto {
 		public List<ProjectDto> projects;
-		public int pageNum;
-		public int totalPages;
-		public long totalProjects;
 		public ProjectsPageDto() {
 		}
-		public ProjectsPageDto(List<ProjectDto> projects, int pageNum, int totalPages, long totalProjects) {
+		public ProjectsPageDto(List<ProjectDto> projects) {
 			this.projects = projects;
-			this.pageNum = pageNum;
-			this.totalPages = totalPages;
-			this.totalProjects = totalProjects;
 		}
 	}
     

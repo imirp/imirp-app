@@ -37,7 +37,8 @@ public interface ImirpDataStore {
 	boolean hasStrategyRunForProject(ObjectId projectId, MutationStrategy strategy);
 	Iterable<MutationResultSet> getResultSets(ObjectId projectId, String regionId, int limit);
     Project saveNewProject(Project newProject);
-    Iterable<Project> getProjects(int page, int limit);
+//    Iterable<Project> getProjects(int page, int limit);
+    Iterable<Project> getProjectsByEmail(String email);
 	Project getProject(ObjectId projectId);
 	long countProjects();
 	void completeMutationRequest(ObjectId currentMutationRequestId, long totalMutations, long totalValidMutations);

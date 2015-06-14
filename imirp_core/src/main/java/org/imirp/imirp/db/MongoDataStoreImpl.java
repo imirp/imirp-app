@@ -46,7 +46,14 @@ public class MongoDataStoreImpl implements ImirpDataStore {
 	MongoDataStoreImpl(Jongo jongo){
 		this.jongo = jongo;
 	}
-	
+		
+	@Override
+	public Iterable<Project> getProjectsByEmail(String email) {
+		logger.debug("Getting projects for e-mail[" + email + "]");
+		MongoCollection projectCol = jongo.getCollection(IMIRP_PROJECTS_COL_NAME);
+		return projectCol.find("{email: #}", email).as(Project.class);
+	}
+
 	@Override
 	public void storeMutationResultSet(ObjectId projectId, String sequence, String regionId, List<TargetPredictionResult> results) {
 		logger.debug("Storing " + results.size() + " results for sequence[" + sequence + "]");
@@ -89,9 +96,9 @@ public class MongoDataStoreImpl implements ImirpDataStore {
 	public List<ImirpProjectMutationRequest> getMutationRequestsForProject(ObjectId projectId, @Nullable Boolean completed) {
 		MongoCollection requestsCol = jongo.getCollection(IMIRP_PROJECT_REQUESTS_COL_NAME);
 		if(completed != null){
-			return Lists.newArrayList(requestsCol.find("{projectId: #, dateCompleted: {$exists: #}}", projectId, completed).as(ImirpProjectMutationRequest.class));
+			return Lists.newArrayList((Iterable<ImirpProjectMutationRequest>)requestsCol.find("{projectId: #, dateCompleted: {$exists: #}}", projectId, completed).as(ImirpProjectMutationRequest.class));
 		}else{
-			return Lists.newArrayList(requestsCol.find().as(ImirpProjectMutationRequest.class));
+			return Lists.newArrayList((Iterable<ImirpProjectMutationRequest>)requestsCol.find().as(ImirpProjectMutationRequest.class));
 		}
 	}
 
@@ -125,11 +132,11 @@ public class MongoDataStoreImpl implements ImirpDataStore {
         return newProject;
     }
 
-	@Override
-	public Iterable<Project> getProjects(int page, int limit) {
-		MongoCollection projectsCol = jongo.getCollection(IMIRP_PROJECTS_COL_NAME);
-		return projectsCol.find().limit(limit).skip(page * limit).sort("{dateCreated:-1}").as(Project.class);
-	}
+//	@Override
+//	public Iterable<Project> getProjects(int page, int limit) {
+//		MongoCollection projectsCol = jongo.getCollection(IMIRP_PROJECTS_COL_NAME);
+//		return projectsCol.find().limit(limit).skip(page * limit).sort("{dateCreated:-1}").as(Project.class);
+//	}
 
 	@Override
 	public Project getProject(ObjectId projectId) {

@@ -33,6 +33,7 @@ public final class ProjectDto implements Serializable {
     private static final long serialVersionUID = 735239150106801512L;        
     public String id;
     public String name;
+    public String email;
     public String description;        
     @JsonSerialize(using=JsonDateSerializer.class)
     public Date dateCreated;
@@ -44,6 +45,7 @@ public final class ProjectDto implements Serializable {
 
     public static ProjectDto fromModel(Project model){
         final ProjectDto projectDto = new ProjectDto();
+        projectDto.email = model.email;
         projectDto.name = model.name;
         projectDto.description = model.description;
         projectDto.id = model._id.toString();
@@ -57,6 +59,7 @@ public final class ProjectDto implements Serializable {
     public Project toModel() {
         Project project = new Project();
         project._id = (id == null) ? null : new ObjectId(id);
+        project.email = email;
         project.name = name;
         project.dateCreated = dateCreated;
         project.description = description;
@@ -71,7 +74,13 @@ public final class ProjectDto implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-    public String getName() {
+    public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getName() {
         return name;
     }
     public void setName(String name) {

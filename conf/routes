@@ -6,12 +6,11 @@
 GET    /api/projects/:projectId/results             @controllers.ApiController.getResults(projectId: String, limit: Int ?= 5)
 GET    /api/projects/:projectId/:regionId/mutants   @controllers.ApiController.getRegionMutants(projectId: String, regionId: String, limit: Int ?= 5)
 GET    /api/projects/:projectId/requests            @controllers.ApiController.getProjectRequests(projectId: String, completed: java.lang.Boolean ?= null)
-GET    /api/projects                                @controllers.ApiController.getProjects(page: Int ?=0, limit: Int ?= 10)
 POST   /api/projects/new                            @controllers.ApiController.createProject()
 POST   /api/projects/mutate                         @controllers.ApiController.projectMutate()
 
 # VIEWS
-GET    /projects                                    @controllers.ViewController.viewProjects(page: Int ?=0, limit: Int ?= 10)
+GET    /projects                                    @controllers.ViewController.retrieveProjects()
 GET    /projects/new                                @controllers.ViewController.createProject()
 GET    /projects/:projectId                         @controllers.ViewController.viewProject(projectId: String)
 GET    /projects/:projectId/mutate                  @controllers.ViewController.projectMutateSetup(projectId: String)

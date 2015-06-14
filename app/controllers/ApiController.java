@@ -130,16 +130,6 @@ public class ApiController extends Controller {
 		});
     }
     
-    public Promise<Result> getProjects(final int page, final int limit) {
-    	return Promise.promise(new Function0<Result>(){
-			@Override
-			public Result apply() throws Throwable {
-				ProjectsPageDto projects = apiService.getProjects(page, limit);
-				return ok(Json.toJson(projects));
-			}
-		});
-    }
-    
     public static final class ResponseMessage implements Serializable {
 		private static final long serialVersionUID = 7645951594143155359L;
 		

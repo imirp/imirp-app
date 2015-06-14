@@ -30,7 +30,7 @@ import com.mongodb.DB;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.ServerAddress;
+import com.mongodb.MongoClientURI;
 import com.typesafe.config.Config;
 
 public class _DbModule extends AbstractModule {
@@ -46,6 +46,7 @@ public class _DbModule extends AbstractModule {
 		// Read the db connection properties
 		String dbHost = config.getString("imirp.db.host");
 		int dbPort = config.getInt("imirp.db.port");
+		String dbName = config.getString("imirp.db.name");
 		logger.info("Connecting to db at host[" + dbHost + "] and port[" + dbPort + "]");		
 		
 		// Setup connection options
@@ -54,25 +55,25 @@ public class _DbModule extends AbstractModule {
 			logger.debug("Mongo SSL enabled.");
 			optionsBuilder = optionsBuilder.socketFactory(SSLSocketFactory.getDefault());
 		}
-        MongoClientOptions o = optionsBuilder.build();
-		MongoClient mongo = new MongoClient(new ServerAddress(dbHost, dbPort), o);
+		
+        MongoClientURI uri;
+        if(config.hasPath("imirp.db.user")){
+        	String user = config.getString("imirp.db.user");
+        	String password = config.getString("imirp.db.password");
+        	uri = new MongoClientURI("mongodb://" + user + ":" + password + "@" + dbHost + "/?authSource=" + dbName);	
+        }else{
+        	uri = new MongoClientURI("mongodb://" + dbHost + "/");
+        }
+        MongoClient mongo = new MongoClient(uri);
 		
 		return mongo;
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Provides @Singleton
 	Jongo provideJongo(Mongo mongo, Config config){
 		String dbName = config.getString("imirp.db.name");
 		logger.debug("Using database[" + dbName + "]");
 		DB db = mongo.getDB(dbName);
-		logger.debug("Authenticating...");
-		if(config.hasPath("imirp.db.user")){
-			if(!db.authenticate(config.getString("imirp.db.user"), config.getString("imirp.db.password").toCharArray())){
-				logger.error("Unable to authenticate to mongo database.");
-				return null;
-			}
-		}
 		return new Jongo(db);
 	}
 }

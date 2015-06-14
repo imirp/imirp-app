@@ -32,6 +32,7 @@ import org.jongo.marshall.jackson.oid.Id;
 public class Project {
 	@Id
 	public ObjectId _id;
+	public String email;
 	public Date dateCreated;
 	public String name;
 	public String description;
@@ -43,8 +44,9 @@ public class Project {
 		super();
 	}
 
-	public Project(String name, String description, String wildSequence, Collection<MutationSite> mutationSites, Species species) {
+	public Project(String email, String name, String description, String wildSequence, Collection<MutationSite> mutationSites, Species species) {
 		super();
+		this.email = email;
 		this.dateCreated = new Date();
 		this.name = name;
 		this.description = description;

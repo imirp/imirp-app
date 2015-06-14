@@ -23,6 +23,8 @@ import javax.inject.Inject;
 import org.bson.types.ObjectId;
 import org.imirp.imirp.tsp.Species;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import play.Routes;
 import play.data.DynamicForm;
 import play.libs.F.Function0;
@@ -50,17 +52,14 @@ public class ViewController extends Controller {
 	}
 
 	public Result index() {		
-		return redirect(controllers.routes.ViewController.viewProjects(0, 10));
+		return ok("TODO: Implement new index page.");
 	}
 
-	public Promise<Result> viewProjects(final int page, final int limit) {
+	public Promise<Result> retrieveProjects() {
 		return Promise.promise(new Function0<Result>() {
 			@Override
 			public Result apply() throws Throwable {
-				ProjectsPageDto dto = apiService.getProjects(page, limit <= 0 ? 0 : limit);
-				
-				String jsInitData = Json.toJson(dto).toString();
-				return ok(views.html.projects.render(jsInitData));
+				return ok("TODO: Implement retrieve project page");
 			}
 		});
 	}
@@ -162,7 +161,7 @@ public class ViewController extends Controller {
 				"appRoutes", // appRoutes will be the JS object available in our view
 				routes.javascript.ApiController.createProject(), routes.javascript.ApiController.getProjectRequests(), routes.javascript.ApiController.getRegionMutants(),
 				routes.javascript.ApiController.projectMutate(), routes.javascript.ViewController.createProject(), routes.javascript.ViewController.projectMutateSetup(),
-				routes.javascript.ViewController.viewProjects(), routes.javascript.ViewController.viewResults(), routes.javascript.ApiController.getProjects(),
+				routes.javascript.ViewController.viewResults(), 
 				routes.javascript.ViewController.viewProject(), routes.javascript.ViewController.analyzeMutant(), routes.javascript.ApiController.getResults(),
 				routes.javascript.ViewController.visualizeSequence(), routes.javascript.ViewController.targetPredict(), routes.javascript.ViewController.targetPredictSubmit()));
 	}

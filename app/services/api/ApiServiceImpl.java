@@ -107,18 +107,14 @@ public class ApiServiceImpl implements ApiService {
 	}
 
 	@Override
-	public ProjectsPageDto getProjects(int page, int limit) {
-		Iterable<Project> projects = datastore.getProjects(page, limit);
+	public ProjectsPageDto getProjectsByEmail(String email) {
+		Iterable<Project> projects = datastore.getProjectsByEmail(email);
 		ArrayList<ProjectDto> projectDtos = new ArrayList<>();
 		for (Project project : projects) {
 			projectDtos.add(ProjectDto.fromModel(project));
 		}
-
-		long numProjects = getProjectCount();
-		int numPages = Math.max(1, (int) (numProjects / limit)
-				+ (numProjects % limit != 0 ? 1 : 0));
-		ProjectsPageDto dto = new ProjectsPageDto(projectDtos, page < 0 ? 0
-				: page, numPages, numProjects);
+		
+		ProjectsPageDto dto = new ProjectsPageDto(projectDtos);
 		return dto;
 	}
 
