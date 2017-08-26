@@ -88,11 +88,13 @@ public class MongoDataStoreImpl implements ImirpDataStore {
 	@Override
 	public List<ImirpProjectMutationRequest> getMutationRequestsForProject(ObjectId projectId, @Nullable Boolean completed) {
 		MongoCollection requestsCol = jongo.getCollection(IMIRP_PROJECT_REQUESTS_COL_NAME);
+		Iterable<ImirpProjectMutationRequest> results;
 		if(completed != null){
-			return Lists.newArrayList(requestsCol.find("{projectId: #, dateCompleted: {$exists: #}}", projectId, completed).as(ImirpProjectMutationRequest.class));
+			results = requestsCol.find("{projectId: #, dateCompleted: {$exists: #}}", projectId, completed).as(ImirpProjectMutationRequest.class);
 		}else{
-			return Lists.newArrayList(requestsCol.find().as(ImirpProjectMutationRequest.class));
+			results = requestsCol.find().as(ImirpProjectMutationRequest.class);
 		}
+		return Lists.newArrayList(results);
 	}
 
 	@Override

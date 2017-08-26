@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
 	"com.typesafe.akka" %% "akka-cluster" % "2.3.4",
 	"com.typesafe.akka" %% "akka-testkit" % "2.3.4" % Test,
 	"org.mongodb" % "mongo-java-driver" % "3.5.0",
-	"org.jongo" % "jongo" % "1.0",
+	"org.jongo" % "jongo" % "1.3.0",
 	"com.google.inject" % "guice" % "3.0",
 	"javax.inject" % "javax.inject" % "1",
 	"aopalliance" % "aopalliance" % "1.0",
