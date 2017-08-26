@@ -39,18 +39,21 @@ public class _DbModule extends AbstractModule {
 	}
 
 	@Provides @Singleton
-	Mongo provideMongo(Config config) throws UnknownHostException{	
+	MongoClientURI provideMongoURI(Config config) throws UnknownHostException{	
         MongoClientURI uri = new MongoClientURI(config.getString("imirp.db.uri"));
+		return uri;
+	}
+	
+	@Provides @Singleton
+	MongoClient provideMongo(MongoClientURI uri) {	
         MongoClient mongo = new MongoClient(uri);
-		
 		return mongo;
 	}
 	
 	@Provides @Singleton
-	Jongo provideJongo(Mongo mongo, Config config){
-		String dbName = config.getString("imirp.db.name");
+	Jongo provideJongo(MongoClient mongo, MongoClientURI uri){
+		String dbName = uri.getDatabase();
 		logger.debug("Using database[" + dbName + "]");
-		DB db = mongo.getDB(dbName);
-		return new Jongo(db);
+		return new Jongo(mongo.getDB(dbName));
 	}
 }
