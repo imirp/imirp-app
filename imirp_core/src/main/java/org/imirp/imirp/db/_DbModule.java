@@ -18,19 +18,14 @@ package org.imirp.imirp.db;
 
 import java.net.UnknownHostException;
 
-import javax.net.ssl.SSLSocketFactory;
-
 import org.apache.log4j.Logger;
 import org.jongo.Jongo;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.mongodb.DB;
-import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.ServerAddress;
+import com.mongodb.MongoClientURI;
 import com.typesafe.config.Config;
 
 public class _DbModule extends AbstractModule {
@@ -42,37 +37,21 @@ public class _DbModule extends AbstractModule {
 	}
 
 	@Provides @Singleton
-	Mongo provideMongo(Config config) throws UnknownHostException{
-		// Read the db connection properties
-		String dbHost = config.getString("imirp.db.host");
-		int dbPort = config.getInt("imirp.db.port");
-		logger.info("Connecting to db at host[" + dbHost + "] and port[" + dbPort + "]");		
-		
-		// Setup connection options
-		MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
-		if(config.getBoolean("imirp.db.ssl_enabled")){
-			logger.debug("Mongo SSL enabled.");
-			optionsBuilder = optionsBuilder.socketFactory(SSLSocketFactory.getDefault());
-		}
-        MongoClientOptions o = optionsBuilder.build();
-		MongoClient mongo = new MongoClient(new ServerAddress(dbHost, dbPort), o);
-		
+	MongoClientURI provideMongoURI(Config config) throws UnknownHostException{	
+        MongoClientURI uri = new MongoClientURI(config.getString("imirp.db.uri"));
+		return uri;
+	}
+	
+	@Provides @Singleton
+	MongoClient provideMongo(MongoClientURI uri) throws UnknownHostException {	
+        MongoClient mongo = new MongoClient(uri);
 		return mongo;
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Provides @Singleton
-	Jongo provideJongo(Mongo mongo, Config config){
-		String dbName = config.getString("imirp.db.name");
+	Jongo provideJongo(MongoClient mongo, MongoClientURI uri){
+		String dbName = uri.getDatabase();
 		logger.debug("Using database[" + dbName + "]");
-		DB db = mongo.getDB(dbName);
-		logger.debug("Authenticating...");
-		if(config.hasPath("imirp.db.user")){
-			if(!db.authenticate(config.getString("imirp.db.user"), config.getString("imirp.db.password").toCharArray())){
-				logger.error("Unable to authenticate to mongo database.");
-				return null;
-			}
-		}
-		return new Jongo(db);
+		return new Jongo(mongo.getDB(dbName));
 	}
 }
