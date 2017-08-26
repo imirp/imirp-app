@@ -18,8 +18,6 @@ package org.imirp.imirp.db;
 
 import java.net.UnknownHostException;
 
-import javax.net.ssl.SSLSocketFactory;
-
 import org.apache.log4j.Logger;
 import org.jongo.Jongo;
 
@@ -29,7 +27,6 @@ import com.google.inject.Singleton;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import com.typesafe.config.Config;
 
@@ -42,28 +39,8 @@ public class _DbModule extends AbstractModule {
 	}
 
 	@Provides @Singleton
-	Mongo provideMongo(Config config) throws UnknownHostException{
-		// Read the db connection properties
-		String dbHost = config.getString("imirp.db.host");
-		int dbPort = config.getInt("imirp.db.port");
-		String dbName = config.getString("imirp.db.name");
-		logger.info("Connecting to db at host[" + dbHost + "] and port[" + dbPort + "]");		
-		
-		// Setup connection options
-		MongoClientOptions.Builder optionsBuilder = new MongoClientOptions.Builder();
-		if(config.getBoolean("imirp.db.ssl_enabled")){
-			logger.debug("Mongo SSL enabled.");
-			optionsBuilder = optionsBuilder.socketFactory(SSLSocketFactory.getDefault());
-		}
-		
-        MongoClientURI uri;
-        if(config.hasPath("imirp.db.user")){
-        	String user = config.getString("imirp.db.user");
-        	String password = config.getString("imirp.db.password");
-        	uri = new MongoClientURI("mongodb://" + user + ":" + password + "@" + dbHost + "/?authSource=" + dbName);	
-        }else{
-        	uri = new MongoClientURI("mongodb://" + dbHost + "/");
-        }
+	Mongo provideMongo(Config config) throws UnknownHostException{	
+        MongoClientURI uri = new MongoClientURI(config.getString("imirp.db.uri"));
         MongoClient mongo = new MongoClient(uri);
 		
 		return mongo;
